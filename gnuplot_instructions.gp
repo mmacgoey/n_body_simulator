@@ -1,0 +1,1 @@
+plot "mass_density.dat" matrix with image

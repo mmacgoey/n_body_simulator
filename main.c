@@ -1,14 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #define _USE_MATH_DEFINES
-#define N 10 // sim size
-#define NUM_PARTICLES 100 // number of particles
+#define N 256 // sim size
+#define NUM_PARTICLES 20000 // number of particles
 
 int i, j;
 
 int mass_deposition_cic(double* position, double* target, int num_points) {
+
     for (int i = 0; i < num_points; ++i) { // iterate over all points in space
 
         double x = position[2 * i]; // x position of i-th particle
@@ -41,6 +43,12 @@ double uniform_random_double(double a, double b) {
 };
 
 int main() {
+
+    srand(time(NULL));
+
+    // create and open file to store mass density data
+    char const *file_name = "mass_density.dat";
+    FILE *file = fopen(file_name, "w");
     
     // initialise density and potential arrays to zero
     double *density = calloc(N * N, sizeof(double));
@@ -61,10 +69,15 @@ int main() {
     // print resulting mass distribution
     for (i = 0; i < N; ++i) {
         for (j = 0; j < N; ++j) {
-            printf("%6.2f ", density[i * N + j]);
+            fprintf(file, "%6.2f ", density[i * N + j]);
         };
-        printf("\n");
+        if (i != N - 1) fprintf(file, "\n");
     };
+
+    fclose(file);
+
+    // use command line to run gnuplot instructions from file
+    system("gnuplot -persistent gnuplot_instructions.gp");
 
     return 0;
 }

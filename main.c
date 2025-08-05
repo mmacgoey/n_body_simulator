@@ -76,8 +76,16 @@ int main() {
 
     fclose(file);
 
-    // use command line to run gnuplot instructions from file
-    system("gnuplot -persistent gnuplot_instructions.gp");
-
+    // check if gnuplot is installed 
+    // if so use command line to run gnuplot instructions from file
+    int status = system("gnuplot --version > /dev/null 2>&1");
+    if (status == 0) {
+        system("gnuplot -persistent gnuplot_instructions.gp");
+    }
+    else  {
+        (printf("gnuplot is not installed \n"));
+        return 1;
+    }
+    
     return 0;
 }
